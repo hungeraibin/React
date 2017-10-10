@@ -4,17 +4,17 @@ import './reset.css';
 import './App.css';
 import TodoInput from './TodoInput';
 import TodoItem from './TodoItem';
+import * as localStore from './localStore';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       newTodo: '',
-      todoList: [
-
-      ]
+      todoList: localStore.load('todoList') || []
     };
   }
+
   render() {
     let todos = this.state.todoList
       .filter((item)=> !item.deleted)
@@ -27,7 +27,6 @@ class App extends Component {
         </li>
 	    )
     });
-
     return (
       <div className="App">
         <h1>My To Do</h1>
@@ -42,6 +41,11 @@ class App extends Component {
       </div>
     );
   }
+
+  componentDidUpdate() {
+	  localStore.save('todoList', this.state.todoList);
+  }
+
   toggle(e, todo) {
     todo.status = todo.status === 'completed' ? '' : 'completed';
     this.setState(this.state);
